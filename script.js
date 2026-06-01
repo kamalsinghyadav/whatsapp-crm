@@ -3,7 +3,175 @@
    Complete CRM logic: Customers, Follow-ups, Payments,
    Broadcast, Reports, Settings, Dashboard
    ============================================================ */
+// ===== LANGUAGE TRANSLATIONS =====
+const LANGUAGES = {
+  en: {
+    name: "English",
+    dashboard: "Dashboard", customers: "Customers", followups: "Follow-ups",
+    payments: "Payments", broadcast: "Broadcast", reports: "Reports", settings: "Settings",
+    addCustomer: "Add Customer", addFollowup: "Add Follow-up", addPayment: "Add Payment",
+    totalCustomers: "Total Customers", pendingFollowups: "Pending Follow-ups",
+    totalCollection: "Total Collection", messagesSent: "Messages Sent",
+    save: "Save", cancel: "Cancel", delete: "Delete", edit: "Edit",
+    search: "Search...", export: "Export CSV", noData: "No data available"
+  },
+  hi: {
+    name: "हिन्दी",
+    dashboard: "डैशबोर्ड", customers: "ग्राहक", followups: "फॉलो-अप",
+    payments: "भुगतान", broadcast: "ब्रॉडकास्ट", reports: "रिपोर्ट", settings: "सेटिंग्स",
+    addCustomer: "ग्राहक जोड़ें", addFollowup: "फॉलो-अप जोड़ें", addPayment: "भुगतान जोड़ें",
+    totalCustomers: "कुल ग्राहक", pendingFollowups: "बकाया फॉलो-अप",
+    totalCollection: "कुल संग्रह", messagesSent: "संदेश भेजे",
+    save: "सहेजें", cancel: "रद्द करें", delete: "हटाएं", edit: "संपादित करें",
+    search: "खोजें...", export: "CSV निर्यात", noData: "कोई डेटा नहीं"
+  },
+  hinglish: {
+    name: "Hinglish",
+    dashboard: "Dashboard", customers: "Customers", followups: "Follow-ups",
+    payments: "Payments", broadcast: "Broadcast", reports: "Reports", settings: "Settings",
+    addCustomer: "Customer Add Karo", addFollowup: "Follow-up Add Karo", addPayment: "Payment Add Karo",
+    totalCustomers: "Total Customers", pendingFollowups: "Pending Follow-ups",
+    totalCollection: "Total Collection", messagesSent: "Messages Sent",
+    save: "Save Karo", cancel: "Cancel", delete: "Delete Karo", edit: "Edit Karo",
+    search: "Dhundo...", export: "CSV Export", noData: "Koi data nahi"
+  },
+  bn: {
+    name: "বাংলা",
+    dashboard: "ড্যাশবোর্ড", customers: "গ্রাহক", followups: "ফলো-আপ",
+    payments: "পেমেন্ট", broadcast: "ব্রডকাস্ট", reports: "রিপোর্ট", settings: "সেটিংস",
+    addCustomer: "গ্রাহক যোগ করুন", addFollowup: "ফলো-আপ যোগ করুন", addPayment: "পেমেন্ট যোগ করুন",
+    totalCustomers: "মোট গ্রাহক", pendingFollowups: "মুলতুবি ফলো-আপ",
+    totalCollection: "মোট সংগ্রহ", messagesSent: "পাঠানো বার্তা",
+    save: "সংরক্ষণ করুন", cancel: "বাতিল", delete: "মুছুন", edit: "সম্পাদনা করুন",
+    search: "খুঁজুন...", export: "CSV রপ্তানি", noData: "কোনো ডেটা নেই"
+  },
+  ta: {
+    name: "தமிழ்",
+    dashboard: "டாஷ்போர்டு", customers: "வாடிக்கையாளர்கள்", followups: "பின்தொடர்தல்",
+    payments: "கொடுப்பனவுகள்", broadcast: "ஒளிபரப்பு", reports: "அறிக்கைகள்", settings: "அமைப்புகள்",
+    addCustomer: "வாடிக்கையாளரை சேர்க்கவும்", addFollowup: "பின்தொடர்தல் சேர்க்கவும்", addPayment: "கொடுப்பனவு சேர்க்கவும்",
+    totalCustomers: "மொத்த வாடிக்கையாளர்கள்", pendingFollowups: "நிலுவையில் உள்ள பின்தொடர்தல்",
+    totalCollection: "மொத்த வசூல்", messagesSent: "அனுப்பப்பட்ட செய்திகள்",
+    save: "சேமிக்கவும்", cancel: "ரத்து செய்", delete: "நீக்கு", edit: "திருத்து",
+    search: "தேடுங்கள்...", export: "CSV ஏற்றுமதி", noData: "தரவு இல்லை"
+  },
+  te: {
+    name: "తెలుగు",
+    dashboard: "డాష్‌బోర్డ్", customers: "కస్టమర్లు", followups: "ఫాలో-అప్స్",
+    payments: "చెల్లింపులు", broadcast: "ప్రసారం", reports: "నివేదికలు", settings: "సెట్టింగులు",
+    addCustomer: "కస్టమర్ జోడించు", addFollowup: "ఫాలో-అప్ జోడించు", addPayment: "చెల్లింపు జోడించు",
+    totalCustomers: "మొత్తం కస్టమర్లు", pendingFollowups: "పెండింగ్ ఫాలో-అప్స్",
+    totalCollection: "మొత్తం వసూలు", messagesSent: "పంపిన సందేశాలు",
+    save: "సేవ్ చేయి", cancel: "రద్దు చేయి", delete: "తొలగించు", edit: "సవరించు",
+    search: "వెతకండి...", export: "CSV ఎగుమతి", noData: "డేటా లేదు"
+  },
+  mr: {
+    name: "मराठी",
+    dashboard: "डॅशबोर्ड", customers: "ग्राहक", followups: "फॉलो-अप",
+    payments: "देयके", broadcast: "प्रसारण", reports: "अहवाल", settings: "सेटिंग्ज",
+    addCustomer: "ग्राहक जोडा", addFollowup: "फॉलो-अप जोडा", addPayment: "देयक जोडा",
+    totalCustomers: "एकूण ग्राहक", pendingFollowups: "प्रलंबित फॉलो-अप",
+    totalCollection: "एकूण संकलन", messagesSent: "पाठवलेले संदेश",
+    save: "जतन करा", cancel: "रद्द करा", delete: "हटवा", edit: "संपादित करा",
+    search: "शोधा...", export: "CSV निर्यात", noData: "डेटा नाही"
+  },
+  gu: {
+    name: "ગુજરાતી",
+    dashboard: "ડેશબોર્ડ", customers: "ગ્રાહકો", followups: "ફોલો-અપ",
+    payments: "ચુકવણીઓ", broadcast: "પ્રસારણ", reports: "અહેવાલ", settings: "સેટિંગ્સ",
+    addCustomer: "ગ્રાહક ઉમેરો", addFollowup: "ફોલો-અપ ઉમેરો", addPayment: "ચુકવણી ઉમેરો",
+    totalCustomers: "કુલ ગ્રાહકો", pendingFollowups: "બાકી ફોલો-અપ",
+    totalCollection: "કુલ સંગ્રહ", messagesSent: "મોકલેલ સંદેશ",
+    save: "સાચવો", cancel: "રદ કરો", delete: "કાઢો", edit: "સંપાદિત કરો",
+    search: "શોધો...", export: "CSV નિકાસ", noData: "કોઈ ડેટા નથી"
+  },
+  kn: {
+    name: "ಕನ್ನಡ",
+    dashboard: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್", customers: "ಗ್ರಾಹಕರು", followups: "ಫಾಲೋ-ಅಪ್",
+    payments: "ಪಾವತಿಗಳು", broadcast: "ಪ್ರಸಾರ", reports: "ವರದಿಗಳು", settings: "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    addCustomer: "ಗ್ರಾಹಕ ಸೇರಿಸಿ", addFollowup: "ಫಾಲೋ-ಅಪ್ ಸೇರಿಸಿ", addPayment: "ಪಾವತಿ ಸೇರಿಸಿ",
+    totalCustomers: "ಒಟ್ಟು ಗ್ರಾಹಕರು", pendingFollowups: "ಬಾಕಿ ಫಾಲೋ-ಅಪ್",
+    totalCollection: "ಒಟ್ಟು ಸಂಗ್ರಹ", messagesSent: "ಕಳುಹಿಸಿದ ಸಂದೇಶಗಳು",
+    save: "ಉಳಿಸಿ", cancel: "ರದ್ದು ಮಾಡಿ", delete: "ಅಳಿಸಿ", edit: "ಸಂಪಾದಿಸಿ",
+    search: "ಹುಡುಕಿ...", export: "CSV ರಫ್ತು", noData: "ಡೇಟಾ ಇಲ್ಲ"
+  },
+  ml: {
+    name: "മലയാളം",
+    dashboard: "ഡാഷ്‌ബോർഡ്", customers: "ഉപഭോക്താക്കൾ", followups: "ഫോളോ-അപ്പ്",
+    payments: "പേയ്‌മെന്റുകൾ", broadcast: "പ്രക്ഷേപണം", reports: "റിപ്പോർട്ടുകൾ", settings: "ക്രമീകരണങ്ങൾ",
+    addCustomer: "ഉപഭോക്താവിനെ ചേർക്കുക", addFollowup: "ഫോളോ-അപ്പ് ചേർക്കുക", addPayment: "പേയ്‌മെന്റ് ചേർക്കുക",
+    totalCustomers: "ആകെ ഉപഭോക്താക്കൾ", pendingFollowups: "കാത്തിരിക്കുന്ന ഫോളോ-അപ്പ്",
+    totalCollection: "ആകെ ശേഖരണം", messagesSent: "അയച്ച സന്ദേശങ്ങൾ",
+    save: "സംരക്ഷിക്കുക", cancel: "റദ്ദാക്കുക", delete: "ഇല്ലാതാക്കുക", edit: "തിരുത്തുക",
+    search: "തിരയുക...", export: "CSV കയറ്റുമതി", noData: "ഡേറ്റ ഇല്ല"
+  },
+  pa: {
+    name: "ਪੰਜਾਬੀ",
+    dashboard: "ਡੈਸ਼ਬੋਰਡ", customers: "ਗਾਹਕ", followups: "ਫਾਲੋ-ਅੱਪ",
+    payments: "ਭੁਗਤਾਨ", broadcast: "ਪ੍ਰਸਾਰਣ", reports: "ਰਿਪੋਰਟਾਂ", settings: "ਸੈਟਿੰਗਾਂ",
+    addCustomer: "ਗਾਹਕ ਜੋੜੋ", addFollowup: "ਫਾਲੋ-ਅੱਪ ਜੋੜੋ", addPayment: "ਭੁਗਤਾਨ ਜੋੜੋ",
+    totalCustomers: "ਕੁੱਲ ਗਾਹਕ", pendingFollowups: "ਬਕਾਇਆ ਫਾਲੋ-ਅੱਪ",
+    totalCollection: "ਕੁੱਲ ਸੰਗ੍ਰਹਿ", messagesSent: "ਭੇਜੇ ਸੁਨੇਹੇ",
+    save: "ਸੇਵ ਕਰੋ", cancel: "ਰੱਦ ਕਰੋ", delete: "ਮਿਟਾਓ", edit: "ਸੋਧੋ",
+    search: "ਖੋਜੋ...", export: "CSV ਨਿਰਯਾਤ", noData: "ਕੋਈ ਡੇਟਾ ਨਹੀਂ"
+  },
+  or: {
+    name: "ଓଡ଼ିଆ",
+    dashboard: "ଡ୍ୟାସବୋର୍ଡ", customers: "ଗ୍ରାହକ", followups: "ଫଲୋ-ଅପ",
+    payments: "ଦେୟ", broadcast: "ସମ୍ପ୍ରଚାର", reports: "ରିପୋର୍ଟ", settings: "ସେଟିଂ",
+    addCustomer: "ଗ୍ରାହକ ଯୋଗ କରନ୍ତୁ", addFollowup: "ଫଲୋ-ଅପ ଯୋଗ କରନ୍ତୁ", addPayment: "ଦେୟ ଯୋଗ କରନ୍ତୁ",
+    totalCustomers: "ମୋଟ ଗ୍ରାହକ", pendingFollowups: "ବିଳମ୍ବିତ ଫଲୋ-ଅପ",
+    totalCollection: "ମୋଟ ସଂଗ୍ରହ", messagesSent: "ପଠାଯାଇଥିବା ବାର୍ତ୍ତା",
+    save: "ସଞ୍ଚୟ କରନ୍ତୁ", cancel: "ବାତିଲ", delete: "ଡିଲିଟ", edit: "ସଂପାଦନ",
+    search: "ଖୋଜନ୍ତୁ...", export: "CSV ରପ୍ତାନି", noData: "କୌଣସି ଡାଟା ନାହିଁ"
+  },
+  ur: {
+    name: "اردو",
+    dashboard: "ڈیش بورڈ", customers: "گاہک", followups: "فالو اپ",
+    payments: "ادائیگیاں", broadcast: "نشریات", reports: "رپورٹس", settings: "ترتیبات",
+    addCustomer: "گاہک شامل کریں", addFollowup: "فالو اپ شامل کریں", addPayment: "ادائیگی شامل کریں",
+    totalCustomers: "کل گاہک", pendingFollowups: "زیر التواء فالو اپ",
+    totalCollection: "کل وصولی", messagesSent: "بھیجے گئے پیغامات",
+    save: "محفوظ کریں", cancel: "منسوخ", delete: "حذف کریں", edit: "ترمیم",
+    search: "تلاش کریں...", export: "CSV برآمد", noData: "کوئی ڈیٹا نہیں"
+  }
+};
 
+let currentLang = 'hinglish'; // default
+
+function t(key) {
+  return (LANGUAGES[currentLang] && LANGUAGES[currentLang][key]) || 
+         (LANGUAGES['hinglish'][key]) || key;
+}
+
+function applyLanguage(langCode) {
+  currentLang = langCode;
+  db.settings.language = langCode;
+  
+  // RTL for Urdu
+  document.body.setAttribute('dir', langCode === 'ur' ? 'rtl' : 'ltr');
+  
+  // Sidebar nav labels
+  document.querySelector('[data-tab="dashboard"] .nav-label').textContent = t('dashboard');
+  document.querySelector('[data-tab="customers"] .nav-label').textContent = t('customers');
+  document.querySelector('[data-tab="followup"] .nav-label').textContent = t('followups');
+  document.querySelector('[data-tab="payment"] .nav-label').textContent = t('payments');
+  document.querySelector('[data-tab="broadcast"] .nav-label').textContent = t('broadcast');
+  document.querySelector('[data-tab="reports"] .nav-label').textContent = t('reports');
+  document.querySelector('[data-tab="settings"] .nav-label').textContent = t('settings');
+
+  // Dashboard page title
+  const dashTitle = document.querySelector('#section-dashboard .page-title');
+  if (dashTitle) dashTitle.textContent = t('dashboard');
+
+  // Stat labels
+  const statLabels = document.querySelectorAll('.stat-label');
+  const statKeys = ['totalCustomers', 'pendingFollowups', 'totalCollection', 'messagesSent'];
+  statLabels.forEach((el, i) => { if (statKeys[i]) el.textContent = t(statKeys[i]); });
+
+  saveToStorage();
+  showToast(`Language: ${LANGUAGES[langCode].name}`, 'success');
+}
 // ===== DATA STORE =====
 let db = {
   customers: [],
