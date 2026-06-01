@@ -1094,9 +1094,9 @@ const templates = {
   followup: 'Namaste {name}! 🔔\n\nHam aapke baare mein soch rahe the.\n\nKya aap available hain baat karne ke liye?\n\nDhanyawad! 🙏'
 };
 
-function setTemplate(type) {
+function setTemplate(type, btn) {
   document.querySelectorAll('.tmpl-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   const msgEl = document.getElementById('broadcast-message');
   if (msgEl) {
     msgEl.value = templates[type] || '';
