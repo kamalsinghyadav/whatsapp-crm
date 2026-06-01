@@ -1538,3 +1538,43 @@ input, select, textarea {
   .customer-grid { grid-template-columns: 1fr; }
   .modal { max-height: 95vh; }
 }
+/* ===== RTL SUPPORT (Urdu) ===== */
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--border);
+}
+
+[dir="rtl"] .main-content {
+  margin-left: 0;
+  margin-right: var(--sidebar-width);
+}
+
+[dir="rtl"] .nav-item.active::before {
+  left: auto;
+  right: 0;
+  border-radius: 2px 0 0 2px;
+}
+
+[dir="rtl"] .activity-item,
+[dir="rtl"] .kc-actions,
+[dir="rtl"] .cc-actions {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .wa-bubble {
+  border-radius: 10px 0 10px 10px;
+}
+
+@media (max-width: 768px) {
+  [dir="rtl"] .sidebar {
+    transform: translateX(100%);
+  }
+  [dir="rtl"] .sidebar.open {
+    transform: translateX(0);
+  }
+  [dir="rtl"] .main-content {
+    margin-right: 0;
+  }
+}
