@@ -228,6 +228,10 @@ function loadFromStorage() {
         tmplFollowup: 'Namaste {name}! Aapka follow-up scheduled hai. Please confirm karein. 🙏',
         tmplPayment: 'Namaste {name}! Aapka ₹{amount} payment pending hai. Please clear karein. 🙏'
       }, ...parsed.settings };
+       if (db.settings.language) {
+  currentLang = db.settings.language;
+  applyLanguage(currentLang);
+}
     }
   } catch(e) {
     console.error('Load error:', e);
@@ -1367,7 +1371,8 @@ function loadSettingsUI() {
   if (notifOverdue) notifOverdue.checked = s.notifOverdue !== false;
   if (notifPayment) notifPayment.checked = s.notifPayment !== false;
   if (notifSound) notifSound.checked = !!s.notifSound;
-
+  const langSelect = document.getElementById('setting-language');
+if (langSelect) langSelect.value = db.settings.language || 'hinglish';
   const tmplFU = document.getElementById('tmpl-followup-default');
   const tmplPay = document.getElementById('tmpl-payment-default');
   if (tmplFU) tmplFU.value = s.tmplFollowup || '';
@@ -1384,6 +1389,10 @@ function saveSettings() {
   db.settings.notifOverdue = document.getElementById('notif-overdue')?.checked ?? true;
   db.settings.notifPayment = document.getElementById('notif-payment')?.checked ?? true;
   db.settings.notifSound = document.getElementById('notif-sound')?.checked ?? false;
+   const langEl = document.getElementById('setting-language');
+if (langEl && langEl.value) {
+  applyLanguage(langEl.value);
+}
 
   saveToStorage();
   updateSidebarUser();
