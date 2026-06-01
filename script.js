@@ -1004,8 +1004,10 @@ function renderPayments() {
   // Update summary bar
   let totalDue = 0, totalReceived = 0, totalPending = 0, totalPartial = 0;
   db.payments.forEach(p => {
-    totalDue += Number(p.amount) || 0;
+  totalDue += Number(p.amount) || 0;
+  if (p.status === 'received' || p.status === 'partial') {
     totalReceived += Number(p.paid) || 0;
+  }
     if (p.status === 'pending' || p.status === 'overdue') totalPending += (Number(p.amount) - Number(p.paid)) || 0;
     if (p.status === 'partial') totalPartial += (Number(p.amount) - Number(p.paid)) || 0;
   });
@@ -1179,7 +1181,7 @@ function startBroadcast() {
       .replace(/{phone}/g, c.phone)
       .replace(/{amount}/g, (() => {
         const pay = db.payments.find(p => p.customerId === c.id && p.status !== 'received');
-        return pay ? pay.amount : '0';
+        return pay ? pay.amount : '[amount]';
       })());
 
     setTimeout(() => {
@@ -1567,7 +1569,7 @@ document.addEventListener('keydown', (e) => {
     document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
   }
   // Ctrl+N to add customer
-  if (e.ctrlKey && e.key === 'n') {
+  if (e.altKey && e.key === 'n') {
     e.preventDefault();
     openModal('modal-add-customer');
   }
