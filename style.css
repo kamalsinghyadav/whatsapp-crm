@@ -1081,9 +1081,8 @@ input, select, textarea {
 
 .chart-container {
   min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  width: 100%;
 }
 
 .chart-bar-row {
