@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp CRM</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; }
+
+    .navbar {
+      background: #075e54;
+      color: white;
+      padding: 16px 24px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .container { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h2 { margin-bottom: 16px; color: #075e54; font-size: 16px; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .btn:hover { background: #1da851; }
+
+    .btn-wa {
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-delete {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f8f8f8; padding: 10px; text-align: left; color: #555; }
+    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+
+    .badge {
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .badge-pending { background: #fff3cd; color: #856404; }
+    .badge-done { background: #d4edda; color: #155724; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .stat-card .num { font-size: 32px; font-weight: bold; color: #075e54; }
+    .stat-card .label { font-size: 13px; color: #888; margin-top: 4px; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab { padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; border: 2px solid #ddd; background: white; }
+    .tab.active { background: #075e54; color: white; border-color: #075e54; }
+
+    #section-followup, #section-payment { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="navbar">📱 WhatsApp CRM</div>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num" id="total-customers">0</div>
+      <div class="label">Total Customers</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="pending-followups">0</div>
+      <div class="label">Pending Follow-ups</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="total-payment">₹0</div>
+      <div class="label">Total Collection</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('customers')">👥 Customers</button>
+    <button class="tab" onclick="showTab('followup')">🔔 Follow-ups</button>
+    <button class="tab" onclick="showTab('payment')">💰 Payments</button>
+  </div>
+
+  <!-- CUSTOMERS SECTION -->
+  <div id="section-customers">
+    <div class="card">
+      <h2>Naya Customer Add Karo</h2>
+      <input type="text" id="cust-name" placeholder="Customer ka naam">
+      <input type="text" id="cust-phone" placeholder="WhatsApp number (91XXXXXXXXXX)">
+      <select id="cust-type">
+        <option value="">Business type chuno</option>
+        <option>Kiryana Store</option>
+        <option>Salon</option>
+        <option>Clinic</option>
+        <option>Restaurant</option>
+        <option>Other</option>
+      </select>
+      <textarea id="cust-notes" placeholder="Notes (optional)" rows="2"></textarea>
+      <button class="btn" onclick="addCustomer()">+ Customer Add Karo</button>
+    </div>
+
+    <div class="card">
+      <h2>Customer List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>Phone</th>
+            <th>Business</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="customer-list"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOLLOWUP SECTION -->
+  <div id="section-followup">
+    <div class="card">
+      <h2>Follow-up Schedule Karo</h2>
+      <select id="fu-customer"></select>
+      <input type="text" id="fu-message" placeholder="Message (e.g. Payment reminder)">
+      <input type="date" id="fu-date">
+      <button class="btn" onclick="addFollowup()">+ Follow-up Add Karo</button>
+    </div>
+
+    <div class="card">
+      <h2>Follow-up List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="followup-list"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAYMENT SECTION -->
+  <div id="section-payment">
+    <div class="card">
+      <h2>Payment Add Karo</h2>
+      <select id="pay-customer"></select>
+      <input type="number" id="pay-amount" placeholder="Amount (₹)">
+      <select id="pay-status">
+        <option value="pending">Pending</option>
+        <option value="received">Received</option>
+      </select>
+      <button class="btn" onclick="addPayment()">+ Payment Add Karo</button>
+    </div>
+
+    <div class="card">
+      <h2>Payment List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="payment-list"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let customers = JSON.parse(localStorage.getItem('customers') || '[]');
+  let followups = JSON.parse(localStorage.getItem('followups') || '[]');
+  let payments  = JSON.parse(localStorage.getItem('payments')  || '[]');
+
+  function save() {
+    localStorage.setItem('customers', JSON.stringify(customers));
+    localStorage.setItem('followups', JSON.stringify(followups));
+    localStorage.setItem('payments',  JSON.stringify(payments));
+    updateStats();
+    renderAll();
+  }
+
+  function showTab(tab) {
+    document.getElementById('section-customers').style.display = tab === 'customers' ? 'block' : 'none';
+    document.getElementById('section-followup').style.display  = tab === 'followup'  ? 'block' : 'none';
+    document.getElementById('section-payment').style.display   = tab === 'payment'   ? 'block' : 'none';
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', ['customers','followup','payment'][i] === tab);
+    });
+  }
+
+  function addCustomer() {
+    const name  = document.getElementById('cust-name').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    const type  = document.getElementById('cust-type').value;
+    const notes = document.getElementById('cust-notes').value.trim();
+    if (!name || !phone) return alert('Naam aur phone dono zaroori hain!');
+    customers.push({ id: Date.now(), name, phone, type, notes });
+    document.getElementById('cust-name').value = '';
+    document.getElementById('cust-phone').value = '';
+    document.getElementById('cust-notes').value = '';
+    save();
+  }
+
+  function deleteCustomer(id) {
+    customers = customers.filter(c => c.id !== id);
+    save();
+  }
+
+  function openWhatsApp(phone, name) {
+    const msg = `Namaste ${name}! Aapka follow-up kar raha hoon.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  function addFollowup() {
+    const custId  = document.getElementById('fu-customer').value;
+    const message = document.getElementById('fu-message').value.trim();
+    const date    = document.getElementById('fu-date').value;
+    if (!custId || !message || !date) return alert('Sab fields bharo!');
+    followups.push({ id: Date.now(), custId: Number(custId), message, date, status: 'pending' });
+    document.getElementById('fu-message').value = '';
+    save();
+  }
+
+  function markDone(id) {
+    const fu = followups.find(f => f.id === id);
+    if (fu) fu.status = 'done';
+    save();
+  }
+
+  function addPayment() {
+    const custId = document.getElementById('pay-customer').value;
+    const amount = document.getElementById('pay-amount').value;
+    const status = document.getElementById('pay-status').value;
+    if (!custId || !amount) return alert('Customer aur amount dono daalo!');
+    payments.push({ id: Date.now(), custId: Number(custId), amount: Number(amount), status });
+    document.getElementById('pay-amount').value = '';
+    save();
+  }
+
+  function updateStats() {
+    document.getElementById('total-customers').textContent = customers.length;
+    document.getElementById('pending-followups').textContent = followups.filter(f => f.status === 'pending').length;
+    const total = payments.filter(p => p.status === 'received').reduce((s, p) => s + p.amount, 0);
+    document.getElementById('total-payment').textContent = '₹' + total.toLocaleString('en-IN');
+  }
+
+  function renderCustomerDropdowns() {
+    const opts = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    document.getElementById('fu-customer').innerHTML  = '<option value="">Customer chuno</option>' + opts;
+    document.getElementById('pay-customer').innerHTML = '<option value="">Customer chuno</option>' + opts;
+  }
+
+  function renderAll() {
+    renderCustomerDropdowns();
+
+    // Customers
+    document.getElementById('customer-list').innerHTML = customers.map(c => `
+      <tr>
+        <td><strong>${c.name}</strong><br><small style="color:#888">${c.type}</small></td>
+        <td>${c.phone}</td>
+        <td>${c.type || '-'}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-wa" onclick="openWhatsApp('${c.phone}','${c.name}')">💬 WhatsApp</button>
+          <button class="btn-delete" onclick="deleteCustomer(${c.id})">🗑 Delete</button>
+        </td>
+      </tr>
+    `).join('') || '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">Abhi koi customer nahi</td></tr>';
+
+    // Follow-ups
+    document.getElementById('followup-list').innerHTML = followups.map(f => {
+      const c = customers.find(c => c.id === f.custId);
+      return `
+        <tr>
+          <td>${c ? c.name : 'Unknown'}</td>
+          <td>${f.message}</td>
+          <td>${f.date}</td>
+          <td><span class="badge badge-${f.status}">${f.status}</span></td>
+          <td>
+            ${f.status === 'pending' ? `<button class="btn-wa" onclick="markDone(${f.id})">✓ Done</button>` : ''}
+            ${c ? `<button class="btn-wa" onclick="openWhatsApp('${c.phone}','${c.name}')">💬 WA</button>` : ''}
+          </td>
+        </tr>
+      `;
+    }).join('') || '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px">Koi follow-up nahi</td></tr>';
+
+    // Payments
+    document.getElementById('payment-list').innerHTML = payments.map(p => {
+      const c = customers.find(c => c.id === p.custId);
+      return `
+        <tr>
+          <td>${c ? c.name : 'Unknown'}</td>
+          <td><strong>₹${p.amount.toLocaleString('en-IN')}</strong></td>
+          <td><span class="badge badge-${p.status === 'received' ? 'done' : 'pending'}">${p.status}</span></td>
+          <td>${c ? `<button class="btn-wa" onclick="openWhatsApp('${c.phone}','${c.name}')">💬 WA</button>` : ''}</td>
+        </tr>
+      `;
+    }).join('') || '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">Koi payment nahi</td></tr>';
+  }
+
+  // Init
+  updateStats();
+  renderAll();
+  showTab('customers');
+</script>
+
+</body>
+</html>
