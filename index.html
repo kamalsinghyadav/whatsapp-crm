@@ -1,357 +1,795 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhatsApp CRM</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f0f2f5; }
-
-    .navbar {
-      background: #075e54;
-      color: white;
-      padding: 16px 24px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .container { max-width: 900px; margin: 24px auto; padding: 0 16px; }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .card h2 { margin-bottom: 16px; color: #075e54; font-size: 16px; }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      background: #25d366;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .btn:hover { background: #1da851; }
-
-    .btn-wa {
-      background: #25d366;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .btn-delete {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { background: #f8f8f8; padding: 10px; text-align: left; color: #555; }
-    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
-
-    .badge {
-      padding: 3px 10px;
-      border-radius: 99px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .badge-pending { background: #fff3cd; color: #856404; }
-    .badge-done { background: #d4edda; color: #155724; }
-
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
-    .stat-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .stat-card .num { font-size: 32px; font-weight: bold; color: #075e54; }
-    .stat-card .label { font-size: 13px; color: #888; margin-top: 4px; }
-
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-    .tab { padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; border: 2px solid #ddd; background: white; }
-    .tab.active { background: #075e54; color: white; border-color: #075e54; }
-
-    #section-followup, #section-payment { display: none; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp CRM Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="navbar">📱 WhatsApp CRM</div>
-
-<div class="container">
-
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat-card">
-      <div class="num" id="total-customers">0</div>
-      <div class="label">Total Customers</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="18" r="18" fill="#25d366"/>
+          <path d="M26.2 9.8C24.1 7.7 21.2 6.5 18.1 6.5C11.7 6.5 6.5 11.7 6.5 18.1C6.5 20.2 7.1 22.2 8.1 24L6.4 29.6L12.1 27.9C13.9 28.8 15.9 29.3 18 29.3C24.4 29.3 29.6 24.1 29.6 17.7C29.7 14.6 28.3 11.9 26.2 9.8ZM18.1 27.3C16.2 27.3 14.3 26.8 12.7 25.9L12.3 25.7L8.9 26.6L9.8 23.3L9.6 22.9C8.6 21.2 8 19.2 8 17.1C8 12.4 11.8 8.6 16.5 8.6C18.8 8.6 20.9 9.5 22.5 11.1C24.1 12.7 25 14.8 25 17.1C25.1 21.8 21.3 27.3 18.1 27.3ZM22.3 19.3C22.1 19.2 21 18.6 20.8 18.6C20.6 18.5 20.4 18.5 20.3 18.7C20.1 18.9 19.6 19.5 19.5 19.7C19.4 19.9 19.2 19.9 19 19.8C17.8 19.2 17 18.7 16.2 17.3C16 17 16.3 17 16.5 16.5C16.6 16.3 16.6 16.1 16.5 15.9C16.4 15.7 15.9 14.6 15.7 14.1C15.5 13.7 15.3 13.7 15.1 13.7H14.7C14.5 13.7 14.2 13.8 14 14C13.8 14.2 13.1 14.9 13.1 16C13.1 17.1 14 18.2 14.1 18.4C14.2 18.6 15.9 21.2 18.5 22.2C20.5 23 21.2 23.1 22.1 22.9C22.6 22.8 23.7 22.2 23.9 21.4C24.1 20.7 24.1 20.1 24 20C23.9 19.5 22.5 19.4 22.3 19.3Z" fill="white"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">WA CRM</span>
+        <span class="logo-sub">Pro Edition</span>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="num" id="pending-followups">0</div>
-      <div class="label">Pending Follow-ups</div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="dashboard" onclick="showTab('dashboard')">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-item" data-tab="customers" onclick="showTab('customers')">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Customers</span>
+        <span class="nav-badge" id="badge-customers">0</span>
+      </button>
+      <button class="nav-item" data-tab="followup" onclick="showTab('followup')">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Follow-ups</span>
+        <span class="nav-badge danger" id="badge-followup">0</span>
+      </button>
+      <button class="nav-item" data-tab="payment" onclick="showTab('payment')">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Payments</span>
+        <span class="nav-badge success" id="badge-payment">0</span>
+      </button>
+      <button class="nav-item" data-tab="broadcast" onclick="showTab('broadcast')">
+        <span class="nav-icon">📢</span>
+        <span class="nav-label">Broadcast</span>
+      </button>
+      <button class="nav-item" data-tab="reports" onclick="showTab('reports')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Reports</span>
+      </button>
+      <button class="nav-item" data-tab="settings" onclick="showTab('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebar-avatar">👤</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebar-username">Admin</span>
+          <span class="user-role">CRM Manager</span>
+        </div>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="num" id="total-payment">₹0</div>
-      <div class="label">Total Collection</div>
+  </aside>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <span class="mobile-title">WA CRM Pro</span>
+    <button class="notif-btn" onclick="showTab('followup')">🔔 <span id="mobile-badge">0</span></button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <section class="tab-section" id="section-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <span class="page-date" id="today-date"></span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-primary">
+          <div class="stat-icon">👥</div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-total-customers">0</div>
+            <div class="stat-label">Total Customers</div>
+          </div>
+          <div class="stat-trend" id="trend-customers">+0 this week</div>
+        </div>
+        <div class="stat-card stat-warning">
+          <div class="stat-icon">🔔</div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-pending-followups">0</div>
+            <div class="stat-label">Pending Follow-ups</div>
+          </div>
+          <div class="stat-trend" id="trend-overdue">0 overdue</div>
+        </div>
+        <div class="stat-card stat-success">
+          <div class="stat-icon">💰</div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-total-collection">₹0</div>
+            <div class="stat-label">Total Collection</div>
+          </div>
+          <div class="stat-trend" id="trend-pending-amt">₹0 pending</div>
+        </div>
+        <div class="stat-card stat-info">
+          <div class="stat-icon">📨</div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-messages-sent">0</div>
+            <div class="stat-label">Messages Sent</div>
+          </div>
+          <div class="stat-trend">via WhatsApp</div>
+        </div>
+      </div>
+
+      <!-- Overdue Follow-ups Alert -->
+      <div class="alert-box" id="overdue-alert" style="display:none">
+        <span class="alert-icon">⚠️</span>
+        <span class="alert-text" id="overdue-text">Aaj ke overdue follow-ups hain!</span>
+        <button class="alert-action" onclick="showTab('followup')">Dekho →</button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+      </div>
+      <div class="quick-actions">
+        <button class="qa-btn" onclick="openModal('modal-add-customer')">
+          <span class="qa-icon">➕</span>
+          <span>Customer Add</span>
+        </button>
+        <button class="qa-btn" onclick="openModal('modal-add-followup')">
+          <span class="qa-icon">📅</span>
+          <span>Follow-up Set</span>
+        </button>
+        <button class="qa-btn" onclick="openModal('modal-add-payment')">
+          <span class="qa-icon">💵</span>
+          <span>Payment Add</span>
+        </button>
+        <button class="qa-btn" onclick="showTab('broadcast')">
+          <span class="qa-icon">📢</span>
+          <span>Broadcast</span>
+        </button>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="section-header">
+        <h2>Recent Activity</h2>
+      </div>
+      <div class="card">
+        <div class="activity-list" id="activity-list">
+          <div class="empty-state">
+            <span>🕐</span>
+            <p>Koi activity nahi abhi</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Follow-ups -->
+      <div class="section-header">
+        <h2>Aaj ke Follow-ups</h2>
+        <button class="see-all-btn" onclick="showTab('followup')">Sab dekho</button>
+      </div>
+      <div class="card">
+        <div id="todays-followups">
+          <div class="empty-state"><span>✅</span><p>Aaj koi follow-up nahi</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CUSTOMERS ===== -->
+    <section class="tab-section" id="section-customers" style="display:none">
+      <div class="page-header">
+        <h1 class="page-title">Customers</h1>
+        <button class="btn-primary" onclick="openModal('modal-add-customer')">+ Customer Add</button>
+      </div>
+
+      <!-- Search & Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-customers" placeholder="Naam ya phone se dhundo..." oninput="filterCustomers()" />
+        </div>
+        <select class="filter-select" id="filter-type" onchange="filterCustomers()">
+          <option value="">Sab types</option>
+          <option>Kiryana Store</option>
+          <option>Salon</option>
+          <option>Clinic</option>
+          <option>Restaurant</option>
+          <option>Medical Store</option>
+          <option>Cloth Store</option>
+          <option>Electronics</option>
+          <option>Other</option>
+        </select>
+        <select class="filter-select" id="filter-tag" onchange="filterCustomers()">
+          <option value="">Sab tags</option>
+          <option value="hot">🔥 Hot Lead</option>
+          <option value="cold">❄️ Cold Lead</option>
+          <option value="active">✅ Active</option>
+          <option value="inactive">😴 Inactive</option>
+        </select>
+        <button class="btn-outline" onclick="exportCustomersCSV()">📥 Export CSV</button>
+      </div>
+
+      <!-- Customer Cards Grid -->
+      <div class="customer-grid" id="customer-grid"></div>
+
+      <!-- Customer Table (alternate view) -->
+      <div class="card" id="customer-table-container">
+        <div class="table-toolbar">
+          <span id="customer-count-text">0 customers</span>
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="setView('grid')" id="vbtn-grid">⊞ Grid</button>
+            <button class="view-btn" onclick="setView('table')" id="vbtn-table">☰ Table</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="customer-table-wrap" style="display:none">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Business</th>
+                <th>Tag</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customer-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOLLOW-UPS ===== -->
+    <section class="tab-section" id="section-followup" style="display:none">
+      <div class="page-header">
+        <h1 class="page-title">Follow-ups</h1>
+        <button class="btn-primary" onclick="openModal('modal-add-followup')">+ Follow-up Add</button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-followups" placeholder="Customer ya message dhundo..." oninput="filterFollowups()" />
+        </div>
+        <select class="filter-select" id="filter-fu-status" onchange="filterFollowups()">
+          <option value="">Sab status</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="done">✅ Done</option>
+          <option value="overdue">🔴 Overdue</option>
+        </select>
+        <select class="filter-select" id="filter-fu-priority" onchange="filterFollowups()">
+          <option value="">Sab priority</option>
+          <option value="high">🔴 High</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+      </div>
+
+      <!-- Followup Kanban Columns -->
+      <div class="kanban-board">
+        <div class="kanban-col">
+          <div class="kanban-col-header overdue-header">
+            <span>🔴 Overdue</span>
+            <span class="kanban-count" id="count-overdue">0</span>
+          </div>
+          <div class="kanban-cards" id="kanban-overdue"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-header today-header">
+            <span>📅 Aaj</span>
+            <span class="kanban-count" id="count-today">0</span>
+          </div>
+          <div class="kanban-cards" id="kanban-today"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-header upcoming-header">
+            <span>⏳ Upcoming</span>
+            <span class="kanban-count" id="count-upcoming">0</span>
+          </div>
+          <div class="kanban-cards" id="kanban-upcoming"></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-col-header done-header">
+            <span>✅ Done</span>
+            <span class="kanban-count" id="count-done">0</span>
+          </div>
+          <div class="kanban-cards" id="kanban-done"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PAYMENTS ===== -->
+    <section class="tab-section" id="section-payment" style="display:none">
+      <div class="page-header">
+        <h1 class="page-title">Payments</h1>
+        <button class="btn-primary" onclick="openModal('modal-add-payment')">+ Payment Add</button>
+      </div>
+
+      <div class="payment-summary-bar">
+        <div class="pay-sum-item">
+          <span class="pay-sum-label">Total Due</span>
+          <span class="pay-sum-val danger" id="pay-total-due">₹0</span>
+        </div>
+        <div class="pay-sum-item">
+          <span class="pay-sum-label">Received</span>
+          <span class="pay-sum-val success" id="pay-total-received">₹0</span>
+        </div>
+        <div class="pay-sum-item">
+          <span class="pay-sum-label">Pending</span>
+          <span class="pay-sum-val warning" id="pay-total-pending">₹0</span>
+        </div>
+        <div class="pay-sum-item">
+          <span class="pay-sum-label">Partial</span>
+          <span class="pay-sum-val info" id="pay-total-partial">₹0</span>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-payments" placeholder="Customer dhundo..." oninput="filterPayments()" />
+        </div>
+        <select class="filter-select" id="filter-pay-status" onchange="filterPayments()">
+          <option value="">Sab status</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="received">✅ Received</option>
+          <option value="partial">🔵 Partial</option>
+          <option value="overdue">🔴 Overdue</option>
+        </select>
+        <button class="btn-outline" onclick="exportPaymentsCSV()">📥 Export CSV</button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Paid</th>
+                <th>Remaining</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payment-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BROADCAST ===== -->
+    <section class="tab-section" id="section-broadcast" style="display:none">
+      <div class="page-header">
+        <h1 class="page-title">Broadcast</h1>
+      </div>
+
+      <div class="broadcast-layout">
+        <div class="broadcast-left">
+          <div class="card">
+            <h2 class="card-title">Message Template</h2>
+            <div class="template-tabs">
+              <button class="tmpl-tab active" onclick="setTemplate('custom')">✏️ Custom</button>
+              <button class="tmpl-tab" onclick="setTemplate('payment')">💰 Payment</button>
+              <button class="tmpl-tab" onclick="setTemplate('offer')">🎁 Offer</button>
+              <button class="tmpl-tab" onclick="setTemplate('followup')">🔔 Follow-up</button>
+            </div>
+            <textarea id="broadcast-message" rows="6" placeholder="Apna message yahan likho...&#10;&#10;{name} - customer ka naam&#10;{phone} - phone number&#10;{amount} - payment amount"></textarea>
+            <div class="char-count"><span id="char-count">0</span>/1000 characters</div>
+
+            <h3 class="sub-title">Recipients Select Karo</h3>
+            <div class="recipient-filters">
+              <label class="checkbox-item">
+                <input type="checkbox" id="bc-all" onchange="toggleAllRecipients()" /> 
+                <span>Sab customers</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="bc-pending" />
+                <span>Pending payment wale</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="bc-overdue-fu" />
+                <span>Overdue follow-up wale</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="bc-hot" />
+                <span>🔥 Hot leads</span>
+              </label>
+            </div>
+
+            <div class="selected-count-bar">
+              <span id="selected-recipients-count">0 recipients selected</span>
+              <button class="btn-primary" onclick="startBroadcast()">📢 Broadcast Shuru Karo</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="broadcast-right">
+          <div class="card">
+            <h2 class="card-title">Preview</h2>
+            <div class="wa-preview">
+              <div class="wa-bubble" id="broadcast-preview">
+                Message preview yahan aayega...
+              </div>
+              <span class="wa-time">12:00 PM ✓✓</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Broadcast History</h2>
+            <div id="broadcast-history-list">
+              <div class="empty-state"><span>📭</span><p>Koi broadcast history nahi</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REPORTS ===== -->
+    <section class="tab-section" id="section-reports" style="display:none">
+      <div class="page-header">
+        <h1 class="page-title">Reports</h1>
+        <button class="btn-outline" onclick="printReport()">🖨️ Print</button>
+      </div>
+
+      <div class="report-cards">
+        <div class="card">
+          <h2 class="card-title">Business Type Breakdown</h2>
+          <div class="chart-container" id="chart-business-type"></div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Payment Status Summary</h2>
+          <div class="chart-container" id="chart-payment-status"></div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Follow-up Performance</h2>
+          <div class="chart-container" id="chart-followup-perf"></div>
+        </div>
+        <div class="card report-summary-card">
+          <h2 class="card-title">Monthly Summary</h2>
+          <div id="monthly-summary"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section class="tab-section" id="section-settings" style="display:none">
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+      </div>
+
+      <div class="settings-layout">
+        <div class="card">
+          <h2 class="card-title">Profile Settings</h2>
+          <div class="form-group">
+            <label>Aapka Naam</label>
+            <input type="text" id="setting-name" placeholder="Admin ka naam" />
+          </div>
+          <div class="form-group">
+            <label>Business Naam</label>
+            <input type="text" id="setting-business" placeholder="Aapke business ka naam" />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp Number</label>
+            <input type="text" id="setting-phone" placeholder="91XXXXXXXXXX" />
+          </div>
+          <button class="btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Notification Settings</h2>
+          <div class="toggle-item">
+            <span>Overdue follow-up alerts</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif-overdue" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <span>Payment reminder alerts</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif-payment" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <span>Sound notifications</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif-sound" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Data Management</h2>
+          <div class="data-actions">
+            <button class="btn-outline" onclick="exportAllData()">📤 Export All Data (JSON)</button>
+            <button class="btn-outline" onclick="importData()">📥 Import Data (JSON)</button>
+            <button class="btn-danger" onclick="clearAllData()">🗑️ Sab Data Clear Karo</button>
+          </div>
+          <div class="data-info">
+            <div class="info-row"><span>Customers:</span><span id="info-customers">0</span></div>
+            <div class="info-row"><span>Follow-ups:</span><span id="info-followups">0</span></div>
+            <div class="info-row"><span>Payments:</span><span id="info-payments">0</span></div>
+            <div class="info-row"><span>Storage Used:</span><span id="info-storage">0 KB</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Message Templates</h2>
+          <div class="form-group">
+            <label>Default Follow-up Message</label>
+            <textarea id="tmpl-followup-default" rows="3" placeholder="Namaste {name}! Aapka follow-up..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Payment Reminder Message</label>
+            <textarea id="tmpl-payment-default" rows="3" placeholder="Namaste {name}! ₹{amount} payment..."></textarea>
+          </div>
+          <button class="btn-primary" onclick="saveTemplates()">💾 Templates Save</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Add Customer Modal -->
+  <div class="modal-overlay" id="modal-add-customer">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>👥 Naya Customer Add Karo</h2>
+        <button class="modal-close" onclick="closeModal('modal-add-customer')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Customer Naam *</label>
+            <input type="text" id="cust-name" placeholder="Poora naam" />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp Number *</label>
+            <input type="text" id="cust-phone" placeholder="91XXXXXXXXXX" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Business Type</label>
+            <select id="cust-type">
+              <option value="">Select karo</option>
+              <option>Kiryana Store</option>
+              <option>Salon</option>
+              <option>Clinic</option>
+              <option>Restaurant</option>
+              <option>Medical Store</option>
+              <option>Cloth Store</option>
+              <option>Electronics</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tag / Status</label>
+            <select id="cust-tag">
+              <option value="active">✅ Active</option>
+              <option value="hot">🔥 Hot Lead</option>
+              <option value="cold">❄️ Cold Lead</option>
+              <option value="inactive">😴 Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>City / Area</label>
+          <input type="text" id="cust-city" placeholder="City ya area" />
+        </div>
+        <div class="form-group">
+          <label>Email (optional)</label>
+          <input type="email" id="cust-email" placeholder="email@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="cust-notes" rows="3" placeholder="Koi bhi important notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('modal-add-customer')">Cancel</button>
+        <button class="btn-primary" onclick="addCustomer()">✅ Customer Add Karo</button>
+      </div>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('customers')">👥 Customers</button>
-    <button class="tab" onclick="showTab('followup')">🔔 Follow-ups</button>
-    <button class="tab" onclick="showTab('payment')">💰 Payments</button>
-  </div>
-
-  <!-- CUSTOMERS SECTION -->
-  <div id="section-customers">
-    <div class="card">
-      <h2>Naya Customer Add Karo</h2>
-      <input type="text" id="cust-name" placeholder="Customer ka naam">
-      <input type="text" id="cust-phone" placeholder="WhatsApp number (91XXXXXXXXXX)">
-      <select id="cust-type">
-        <option value="">Business type chuno</option>
-        <option>Kiryana Store</option>
-        <option>Salon</option>
-        <option>Clinic</option>
-        <option>Restaurant</option>
-        <option>Other</option>
-      </select>
-      <textarea id="cust-notes" placeholder="Notes (optional)" rows="2"></textarea>
-      <button class="btn" onclick="addCustomer()">+ Customer Add Karo</button>
-    </div>
-
-    <div class="card">
-      <h2>Customer List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Naam</th>
-            <th>Phone</th>
-            <th>Business</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="customer-list"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- FOLLOWUP SECTION -->
-  <div id="section-followup">
-    <div class="card">
-      <h2>Follow-up Schedule Karo</h2>
-      <select id="fu-customer"></select>
-      <input type="text" id="fu-message" placeholder="Message (e.g. Payment reminder)">
-      <input type="date" id="fu-date">
-      <button class="btn" onclick="addFollowup()">+ Follow-up Add Karo</button>
-    </div>
-
-    <div class="card">
-      <h2>Follow-up List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Message</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="followup-list"></tbody>
-      </table>
+  <!-- Edit Customer Modal -->
+  <div class="modal-overlay" id="modal-edit-customer">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>✏️ Customer Edit Karo</h2>
+        <button class="modal-close" onclick="closeModal('modal-edit-customer')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-cust-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Customer Naam *</label>
+            <input type="text" id="edit-cust-name" />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp Number *</label>
+            <input type="text" id="edit-cust-phone" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Business Type</label>
+            <select id="edit-cust-type">
+              <option value="">Select karo</option>
+              <option>Kiryana Store</option>
+              <option>Salon</option>
+              <option>Clinic</option>
+              <option>Restaurant</option>
+              <option>Medical Store</option>
+              <option>Cloth Store</option>
+              <option>Electronics</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tag</label>
+            <select id="edit-cust-tag">
+              <option value="active">✅ Active</option>
+              <option value="hot">🔥 Hot Lead</option>
+              <option value="cold">❄️ Cold Lead</option>
+              <option value="inactive">😴 Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>City / Area</label>
+          <input type="text" id="edit-cust-city" />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="edit-cust-notes" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('modal-edit-customer')">Cancel</button>
+        <button class="btn-primary" onclick="saveEditCustomer()">💾 Save Changes</button>
+      </div>
     </div>
   </div>
 
-  <!-- PAYMENT SECTION -->
-  <div id="section-payment">
-    <div class="card">
-      <h2>Payment Add Karo</h2>
-      <select id="pay-customer"></select>
-      <input type="number" id="pay-amount" placeholder="Amount (₹)">
-      <select id="pay-status">
-        <option value="pending">Pending</option>
-        <option value="received">Received</option>
-      </select>
-      <button class="btn" onclick="addPayment()">+ Payment Add Karo</button>
-    </div>
-
-    <div class="card">
-      <h2>Payment List</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="payment-list"></tbody>
-      </table>
+  <!-- Add Follow-up Modal -->
+  <div class="modal-overlay" id="modal-add-followup">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>🔔 Follow-up Add Karo</h2>
+        <button class="modal-close" onclick="closeModal('modal-add-followup')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Customer *</label>
+          <select id="fu-customer"></select>
+        </div>
+        <div class="form-group">
+          <label>Follow-up Message *</label>
+          <input type="text" id="fu-message" placeholder="e.g. Payment reminder, Demo schedule" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="fu-date" />
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" id="fu-time" value="10:00" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="fu-priority">
+            <option value="medium">🟡 Medium</option>
+            <option value="high">🔴 High</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="fu-notes" rows="2" placeholder="Extra notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('modal-add-followup')">Cancel</button>
+        <button class="btn-primary" onclick="addFollowup()">✅ Follow-up Add Karo</button>
+      </div>
     </div>
   </div>
 
-</div>
+  <!-- Add Payment Modal -->
+  <div class="modal-overlay" id="modal-add-payment">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>💰 Payment Add Karo</h2>
+        <button class="modal-close" onclick="closeModal('modal-add-payment')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Customer *</label>
+          <select id="pay-customer"></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Total Amount (₹) *</label>
+            <input type="number" id="pay-amount" placeholder="0" oninput="updateRemainingPreview()" />
+          </div>
+          <div class="form-group">
+            <label>Paid Amount (₹)</label>
+            <input type="number" id="pay-paid" placeholder="0" oninput="updateRemainingPreview()" />
+          </div>
+        </div>
+        <div class="form-group remaining-preview" id="remaining-preview" style="display:none">
+          Baaki amount: <strong id="remaining-val">₹0</strong>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="pay-status">
+              <option value="pending">⏳ Pending</option>
+              <option value="received">✅ Received</option>
+              <option value="partial">🔵 Partial</option>
+              <option value="overdue">🔴 Overdue</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="pay-due-date" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select id="pay-method">
+            <option value="cash">💵 Cash</option>
+            <option value="upi">📱 UPI</option>
+            <option value="bank">🏦 Bank Transfer</option>
+            <option value="cheque">📄 Cheque</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="pay-notes" rows="2" placeholder="Invoice number, notes etc."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('modal-add-payment')">Cancel</button>
+        <button class="btn-primary" onclick="addPayment()">✅ Payment Add Karo</button>
+      </div>
+    </div>
+  </div>
 
-<script>
-  let customers = JSON.parse(localStorage.getItem('customers') || '[]');
-  let followups = JSON.parse(localStorage.getItem('followups') || '[]');
-  let payments  = JSON.parse(localStorage.getItem('payments')  || '[]');
+  <!-- Customer Detail Modal -->
+  <div class="modal-overlay" id="modal-customer-detail">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2 id="detail-modal-title">Customer Details</h2>
+        <button class="modal-close" onclick="closeModal('modal-customer-detail')">✕</button>
+      </div>
+      <div class="modal-body" id="customer-detail-body"></div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('modal-customer-detail')">Close</button>
+      </div>
+    </div>
+  </div>
 
-  function save() {
-    localStorage.setItem('customers', JSON.stringify(customers));
-    localStorage.setItem('followups', JSON.stringify(followups));
-    localStorage.setItem('payments',  JSON.stringify(payments));
-    updateStats();
-    renderAll();
-  }
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toast-container"></div>
 
-  function showTab(tab) {
-    document.getElementById('section-customers').style.display = tab === 'customers' ? 'block' : 'none';
-    document.getElementById('section-followup').style.display  = tab === 'followup'  ? 'block' : 'none';
-    document.getElementById('section-payment').style.display   = tab === 'payment'   ? 'block' : 'none';
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', ['customers','followup','payment'][i] === tab);
-    });
-  }
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobile-overlay" onclick="toggleSidebar()"></div>
 
-  function addCustomer() {
-    const name  = document.getElementById('cust-name').value.trim();
-    const phone = document.getElementById('cust-phone').value.trim();
-    const type  = document.getElementById('cust-type').value;
-    const notes = document.getElementById('cust-notes').value.trim();
-    if (!name || !phone) return alert('Naam aur phone dono zaroori hain!');
-    customers.push({ id: Date.now(), name, phone, type, notes });
-    document.getElementById('cust-name').value = '';
-    document.getElementById('cust-phone').value = '';
-    document.getElementById('cust-notes').value = '';
-    save();
-  }
-
-  function deleteCustomer(id) {
-    customers = customers.filter(c => c.id !== id);
-    save();
-  }
-
-  function openWhatsApp(phone, name) {
-    const msg = `Namaste ${name}! Aapka follow-up kar raha hoon.`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-  }
-
-  function addFollowup() {
-    const custId  = document.getElementById('fu-customer').value;
-    const message = document.getElementById('fu-message').value.trim();
-    const date    = document.getElementById('fu-date').value;
-    if (!custId || !message || !date) return alert('Sab fields bharo!');
-    followups.push({ id: Date.now(), custId: Number(custId), message, date, status: 'pending' });
-    document.getElementById('fu-message').value = '';
-    save();
-  }
-
-  function markDone(id) {
-    const fu = followups.find(f => f.id === id);
-    if (fu) fu.status = 'done';
-    save();
-  }
-
-  function addPayment() {
-    const custId = document.getElementById('pay-customer').value;
-    const amount = document.getElementById('pay-amount').value;
-    const status = document.getElementById('pay-status').value;
-    if (!custId || !amount) return alert('Customer aur amount dono daalo!');
-    payments.push({ id: Date.now(), custId: Number(custId), amount: Number(amount), status });
-    document.getElementById('pay-amount').value = '';
-    save();
-  }
-
-  function updateStats() {
-    document.getElementById('total-customers').textContent = customers.length;
-    document.getElementById('pending-followups').textContent = followups.filter(f => f.status === 'pending').length;
-    const total = payments.filter(p => p.status === 'received').reduce((s, p) => s + p.amount, 0);
-    document.getElementById('total-payment').textContent = '₹' + total.toLocaleString('en-IN');
-  }
-
-  function renderCustomerDropdowns() {
-    const opts = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-    document.getElementById('fu-customer').innerHTML  = '<option value="">Customer chuno</option>' + opts;
-    document.getElementById('pay-customer').innerHTML = '<option value="">Customer chuno</option>' + opts;
-  }
-
-  function renderAll() {
-    renderCustomerDropdowns();
-
-    // Customers
-    document.getElementById('customer-list').innerHTML = customers.map(c => `
-      <tr>
-        <td><strong>${c.name}</strong><br><small style="color:#888">${c.type}</small></td>
-        <td>${c.phone}</td>
-        <td>${c.type || '-'}</td>
-        <td style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn-wa" onclick="openWhatsApp('${c.phone}','${c.name}')">💬 WhatsApp</button>
-          <button class="btn-delete" onclick="deleteCustomer(${c.id})">🗑 Delete</button>
-        </td>
-      </tr>
-    `).join('') || '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">Abhi koi customer nahi</td></tr>';
-
-    // Follow-ups
-    document.getElementById('followup-list').innerHTML = followups.map(f => {
-      const c = customers.find(c => c.id === f.custId);
-      return `
-        <tr>
-          <td>${c ? c.name : 'Unknown'}</td>
-          <td>${f.message}</td>
-          <td>${f.date}</td>
-          <td><span class="badge badge-${f.status}">${f.status}</span></td>
-          <td>
-            ${f.status === 'pending' ? `<button class="btn-wa" onclick="markDone(${f.id})">✓ Done</button>` : ''}
-            ${c ? `<button class="btn-wa" onclick="openWhatsApp('${c.phone}','${c.name}')">💬 WA</button>` : ''}
-          </td>
-        </tr>
-      `;
-    }).join('') || '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px">Koi follow-up nahi</td></tr>';
-
-    // Payments
-    document.getElementById('payment-list').innerHTML = payments.map(p => {
-      const c = customers.find(c => c.id === p.custId);
-      return `
-        <tr>
-          <td>${c ? c.name : 'Unknown'}</td>
-          <td><strong>₹${p.amount.toLocaleString('en-IN')}</strong></td>
-          <td><span class="badge badge-${p.status === 'received' ? 'done' : 'pending'}">${p.status}</span></td>
-          <td>${c ? `<button class="btn-wa" onclick="openWhatsApp('${c.phone}','${c.name}')">💬 WA</button>` : ''}</td>
-        </tr>
-      `;
-    }).join('') || '<tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">Koi payment nahi</td></tr>';
-  }
-
-  // Init
-  updateStats();
-  renderAll();
-  showTab('customers');
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
