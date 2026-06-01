@@ -239,10 +239,11 @@ async function loadFromStorage() {
 
     // Firebase se sync karo (latest data)
     if (window.db_fire) {
-      const { collection, getDocs } = window.fsModules;
-      const snap = await getDocs(collection(window.db_fire, 'crm'));
-      snap.forEach(docSnap => {
-        const fireData = JSON.parse(docSnap.data().data || '{}');
+      const { doc, getDoc } = window.fsModules;
+const ref = doc(window.db_fire, 'crm', 'maindata');
+const snap = await getDoc(ref);
+if (snap.exists()) {
+  const fireData = JSON.parse(snap.data().data || '{}');
         if (fireData.customers) {
           db = { ...db, ...fireData };
           localStorage.setItem('wacrm_db', JSON.stringify(db));
