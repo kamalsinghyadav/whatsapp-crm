@@ -1575,3 +1575,28 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INIT TAB (default: dashboard) =====
 showTab('dashboard');
+// PWA Service Worker Register
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('PWA ready!'))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+
+// PWA Install Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Install button show karo
+  const btn = document.createElement('button');
+  btn.textContent = '📲 App Install Karo';
+  btn.className = 'btn-primary';
+  btn.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:998;box-shadow:0 4px 20px rgba(37,211,102,0.4)';
+  btn.onclick = () => {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => btn.remove());
+  };
+  document.body.appendChild(btn);
+});
