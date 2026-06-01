@@ -207,31 +207,49 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== LOCAL STORAGE =====
-function saveToStorage() {
+async function saveToStorage() {
   try {
     localStorage.setItem('wacrm_db', JSON.stringify(db));
+    // Firebase sync
+    if (window.db_fire) {
+      const { doc, updateDoc, collection, addDoc } = window.fsModules;
+      const ref = window.doc(window.db_fire, 'crm', 'maindata');
+      await window.updateDoc(ref, { data: JSON.stringify(db) }).catch(async () => {
+        // Document nahi hai toh create karo
+        await window.fsModules.addDoc(
+          window.fsModules.collection(window.db_fire, 'crm'),
+          { id: 'maindata', data: JSON.stringify(db) }
+        );
+      });
+    }
   } catch(e) {
-    showToast('Storage save error!', 'error');
+    console.error('Save error:', e);
   }
 }
-
-function loadFromStorage() {
+async function loadFromStorage() {
   try {
+    // Pehle localStorage se load karo (fast)
     const saved = localStorage.getItem('wacrm_db');
     if (saved) {
       const parsed = JSON.parse(saved);
       db = { ...db, ...parsed };
-      // Ensure settings defaults
-      db.settings = { ...{
-        name: 'Admin', business: '', phone: '',
-        notifOverdue: true, notifPayment: true, notifSound: false,
-        tmplFollowup: 'Namaste {name}! Aapka follow-up scheduled hai. Please confirm karein. 🙏',
-        tmplPayment: 'Namaste {name}! Aapka ₹{amount} payment pending hai. Please clear karein. 🙏'
-      }, ...parsed.settings };
-       if (db.settings.language) {
-  currentLang = db.settings.language;
-  applyLanguage(currentLang);
-}
+      db.settings = { ...db.settings, ...parsed.settings };
+      if (db.settings.language) applyLanguage(db.settings.language);
+    }
+
+    // Firebase se sync karo (latest data)
+    if (window.db_fire) {
+      const { collection, getDocs } = window.fsModules;
+      const snap = await getDocs(collection(window.db_fire, 'crm'));
+      snap.forEach(docSnap => {
+        const fireData = JSON.parse(docSnap.data().data || '{}');
+        if (fireData.customers) {
+          db = { ...db, ...fireData };
+          localStorage.setItem('wacrm_db', JSON.stringify(db));
+          refreshDashboard();
+          renderCustomers();
+        }
+      });
     }
   } catch(e) {
     console.error('Load error:', e);
