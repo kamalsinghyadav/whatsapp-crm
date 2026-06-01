@@ -29,6 +29,11 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
+    import { getFirestore, doc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firestore = getFirestore(app);
+window.db_fire = firestore;
+window.fsModules = { doc, updateDoc, collection, addDoc, getDocs };
 </script>
   <!-- PWA -->
 <link rel="manifest" href="manifest.json" />
@@ -55,10 +60,6 @@
   <span class="logo-title">Apna Naam</span>
   <span class="logo-sub">CRM Pro</span>
 </div>
-      <div class="logo-text">
-        <span class="mobile-title">Apna Naam</span>
-        <span class="logo-sub">CRM Pro</span>
-      </div>
     </div>
 
     <nav class="sidebar-nav">
@@ -410,10 +411,10 @@
           <div class="card">
             <h2 class="card-title">Message Template</h2>
             <div class="template-tabs">
-              <button class="tmpl-tab active" onclick="setTemplate('custom')">✏️ Custom</button>
-              <button class="tmpl-tab" onclick="setTemplate('payment')">💰 Payment</button>
-              <button class="tmpl-tab" onclick="setTemplate('offer')">🎁 Offer</button>
-              <button class="tmpl-tab" onclick="setTemplate('followup')">🔔 Follow-up</button>
+              <button class="tmpl-tab active" onclick="setTemplate('custom', this)">✏️ Custom</button>
+              <button class="tmpl-tab" onclick="setTemplate('payment', this)">💰 Payment</button>
+              <button class="tmpl-tab" onclick="setTemplate('offer', this)">🎁 Offer</button>
+              <button class="tmpl-tab" onclick="setTemplate('followup', this)">🔔 Follow-up</button>
             </div>
             <textarea id="broadcast-message" rows="6" placeholder="Apna message yahan likho...&#10;&#10;{name} - customer ka naam&#10;{phone} - phone number&#10;{amount} - payment amount"></textarea>
             <div class="char-count"><span id="char-count">0</span>/1000 characters</div>
